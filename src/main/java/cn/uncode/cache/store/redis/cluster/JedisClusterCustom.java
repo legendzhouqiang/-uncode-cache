@@ -1,4 +1,4 @@
-package cn.uncode.cache.store.redis;
+package cn.uncode.cache.store.redis.cluster;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,8 +21,8 @@ import redis.clients.jedis.JedisPool;
  */
 public class JedisClusterCustom extends JedisCluster {
 
-	public JedisClusterCustom(Set<HostAndPort> jedisClusterNode, int timeout,int soTimeout, int maxRedirections, String password,GenericObjectPoolConfig poolConfig) {
-		super(jedisClusterNode, timeout, soTimeout, maxRedirections, password,poolConfig);
+	public JedisClusterCustom(Set<HostAndPort> jedisClusterNode, int timeout, int maxRedirections, GenericObjectPoolConfig poolConfig) {
+		super(jedisClusterNode, timeout, maxRedirections, poolConfig);
 	}
 	
 	public Boolean exists(byte[] bytes) {

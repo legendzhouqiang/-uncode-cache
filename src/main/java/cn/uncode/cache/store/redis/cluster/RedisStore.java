@@ -1,8 +1,9 @@
-package cn.uncode.cache.store.redis;
+package cn.uncode.cache.store.redis.cluster;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
@@ -12,6 +13,8 @@ import cn.uncode.cache.CacheUtils;
 import cn.uncode.cache.framework.ICache;
 import cn.uncode.cache.framework.util.ByteUtil;
 import cn.uncode.cache.framework.util.SerializeUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 public class RedisStore implements ICache<Object, Object> {
 
@@ -104,7 +107,7 @@ public class RedisStore implements ICache<Object, Object> {
 	@Override
 	public List<Object> keys(String pattern) {
 		List<Object> list = new ArrayList<Object>();
-		TreeSet<String> keys = jedisCluster.keys(pattern);
+		TreeSet<String> keys = innerKeys(pattern);
 		for (String str : keys) {
 			Object obj = SerializeUtil.unserialize(ByteUtil.stringToByte(str));
 			if (obj != null) {
@@ -118,7 +121,7 @@ public class RedisStore implements ICache<Object, Object> {
 	public int size() {
 		int count = 0;
 		try {
-			count = jedisCluster.keys("*").size();
+			count = innerKeys("*").size();
 		} catch (Exception e) {
 			LOG.error("redis cache error", e);
 		} finally {
@@ -149,6 +152,24 @@ public class RedisStore implements ICache<Object, Object> {
 
 	public void setJedisCluster(JedisClusterCustom jedisCluster) {
 		this.jedisCluster = jedisCluster;
+	}
+	
+	
+	private TreeSet<String> innerKeys(String pattern) {
+		TreeSet<String> keys = new TreeSet<String>();
+		Map<String, JedisPool> clusterNodes = jedisCluster.getClusterNodes();
+		for (String key : clusterNodes.keySet()) {
+			JedisPool jp = clusterNodes.get(key);
+			Jedis connection = jp.getResource();
+			try {
+				keys.addAll(connection.keys(pattern));
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				connection.close();
+			}
+		}
+		return keys;
 	}
 
 }

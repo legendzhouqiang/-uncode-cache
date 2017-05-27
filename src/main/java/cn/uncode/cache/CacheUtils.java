@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.uncode.cache.framework.ICache;
-import cn.uncode.cache.store.redis.JedisClusterCustom;
-import cn.uncode.cache.store.redis.RedisStore;
+import cn.uncode.cache.store.redis.cluster.JedisClusterCustom;
+import cn.uncode.cache.store.redis.cluster.RedisStore;
 
 public class CacheUtils {
 

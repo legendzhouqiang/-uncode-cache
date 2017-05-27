@@ -3,10 +3,9 @@ package cn.uncode.cache.store.redis.lock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import redis.clients.jedis.exceptions.JedisException;
-
 import cn.uncode.cache.CacheUtils;
-import cn.uncode.cache.store.redis.JedisClusterCustom;
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.exceptions.JedisException;
 
 public class RedisDistributeLock implements DistributeLock {
 
@@ -29,7 +28,7 @@ public class RedisDistributeLock implements DistributeLock {
 	public boolean lock() {
 		// RedisLock非单例，Jedis切勿声明为static,会锁全DB
 		boolean rt = false;
-		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
+		JedisCluster jedisCluster = CacheUtils.getRedisCache();
 		if (jedisCluster == null) {
 			throw new JedisException("jedisCluster is null.");
 		}
@@ -66,7 +65,7 @@ public class RedisDistributeLock implements DistributeLock {
 
 	public boolean unlock() {
 		// RedisLock非单例，Jedis切勿声明为static,会锁全DB
-		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
+		JedisCluster jedisCluster = CacheUtils.getRedisCache();
 		if (jedisCluster == null) {
 			throw new JedisException("jedisCluster is null.");
 		}

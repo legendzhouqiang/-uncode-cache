@@ -10,35 +10,28 @@
         http://www.springframework.org/schema/aop 
 	  http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	  
-	  	<bean id="propertyConfigurer" class="cn.uncode.util.config.UncodePropertyPlaceholderConfigurer"> 
-		    <property name="ignoreResourceNotFound" value="true" /> 
-		    <property name="locations"> 
-		        <list> 
-		            <value>classpath:config.properties</value> 
-		        </list> 
-		    </property>
-		</bean> 
-
 
 		<!-- 设置代理 -->
 		<aop:aspectj-autoproxy proxy-target-class="true" />
 	
-		<!-- 配置缓存 -->
-		<bean id="jedisCluster" class="com.ksudi.proxycache.store.redis.JedisClusterFactory" />
-		<bean id="cache" class="com.ksudi.proxycache.store.redis.RedisStore">
+		<bean id="jedisCluster" class="cn.uncode.cache.store.redis.cluster.JedisClusterFactory">
+			<property name="resource">
+				<value>file:C:/MyDecument/codes/conf/config.properties</value>
+			</property>
+		</bean>
+		<bean id="cache" class="cn.uncode.cache.store.redis.cluster.RedisStore">
 			<property name="jedisCluster" ref="jedisCluster" />
 		</bean>
 	
 		<!-- 配置缓存代理管理器 -->
-		<bean id="proxyCacheManager" class="com.ksudi.proxycache.ConfigCacheManager"
-			init-method="init">
+		<bean id="proxyCacheManager" class="cn.uncode.cache.ConfigCacheManager" init-method="init">
 			<!-- 注解的扫描路径 -->
-			<property name="scanPackage" value="com.ksudi.star.service"></property>
+			<property name="scanPackage" value="com.buffaloex.common.service"></property>
 			<property name="cache" ref="cache" />
 		</bean>
 	
 		<!-- 配置aop缓存处理器 -->
-		<bean class="com.ksudi.proxycache.framework.aop.handle.CacheManagerHandle">
+		<bean class="cn.uncode.cache.framework.aop.handle.CacheManagerHandle">
 			<property name="cacheManager" ref="proxyCacheManager" />
 		</bean>
 	
