@@ -51,12 +51,16 @@ public abstract class CacheManager<E extends ApplicationEvent> implements Applic
 
     private boolean useCache = true;
 
-    protected CacheConfig cacheConfig = new CacheConfig();
+    protected static CacheConfig cacheConfig = new CacheConfig();
     
     private ICache<Object, Object> cache;
 
     /** 打印缓存命中日志 **/
     private boolean openCacheLog = false;
+    /**
+     * 缓存分区（可选）
+     */
+    private String storeRegion;
 
     /**
      * 指定本地缓存时LruMap的大小，默认是1024
@@ -204,13 +208,21 @@ public abstract class CacheManager<E extends ApplicationEvent> implements Applic
         this.openCacheLog = openCacheLog;
     }
 
-    public CacheConfig getCacheConfig() {
+    public static CacheConfig getCacheConfig() {
         return cacheConfig;
     }
 
     public void setCache(ICache<Object, Object> cache) {
         this.cache = cache;
     }
+
+	public String getStoreRegion() {
+		return storeRegion;
+	}
+
+	public void setStoreRegion(String storeRegion) {
+		this.storeRegion = storeRegion;
+	}
 
     
     

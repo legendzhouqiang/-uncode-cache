@@ -1,13 +1,16 @@
 package cn.uncode.cache;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.uncode.cache.framework.ICache;
+import cn.uncode.cache.framework.util.CacheCodeUtil;
 import cn.uncode.cache.store.redis.cluster.JedisClusterCustom;
 import cn.uncode.cache.store.redis.cluster.RedisStore;
 
@@ -27,36 +30,64 @@ public class CacheUtils {
 	}
 
 	public static Object get(Object key) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
+		}
 		Object result = getCache().get(key);
 		LOG.debug("[get] redis cache read,key:" + key + ",result:" + result);
 		return result;
 	}
 
 	public static void put(Object key, Object value) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
+		}
 		getCache().put(key, value);
 		LOG.debug("[put] redis cache write,key:" + key + ",value:" + value);
 	}
 
 	public static void put(Object key, Object value, int expireTime) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
+		}
 		getCache().put(key, value, expireTime);
 		LOG.debug("[put] redis cache write,key:" + key + ",value:" + value
 				+ ",expire:" + expireTime);
 	}
 
 	public static boolean isExists(Object key) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
+		}
 		return getCache().isExists(key);
 	}
 
 	public static void remove(Object key) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
+		}
 		getCache().remove(key);
 		LOG.debug("[remove] redis cache write,key:" + key);
 	}
 
 	public static List<Object> keys(String pattern) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
 		List<Object> keys = getCache().keys(pattern);
-		LOG.debug("[keys] redis cache read, pattern:" + pattern + ",keys:"
-				+ keys);
-		return keys;
+		List<Object> keysList = new ArrayList<Object>();
+		if(keys != null){
+			for(Object key:keys){
+				if(String.valueOf(key).indexOf(storeRegion) != -1){
+					keysList.add(key);
+				}
+			}
+		}
+		LOG.debug("[keys] redis cache read, pattern:" + pattern + ",keys:" + keys);
+		return keysList;
 	}
 
 	public static int size() {
@@ -88,6 +119,10 @@ public class CacheUtils {
 	 *            值
 	 */
 	public static void listAdd(String listKey, String value) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -115,6 +150,10 @@ public class CacheUtils {
 	 * @return 指定范围的值
 	 */
 	public static List<String> listGet(String listKey, int start, int end) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -140,6 +179,10 @@ public class CacheUtils {
 	 * @return 所有值
 	 */
 	public static List<String> listGet(String listKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -165,6 +208,10 @@ public class CacheUtils {
 	 * @return 大小
 	 */
 	public static long listSize(String listKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -190,6 +237,10 @@ public class CacheUtils {
 	 * @return 排序后的结果
 	 */
 	public static List<String> listSort(String listKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -219,6 +270,10 @@ public class CacheUtils {
 	 * @return 排序后的结果
 	 */
 	public static List<String> listSet(String listKey, int index, String value) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -245,6 +300,10 @@ public class CacheUtils {
 	 * @return 指定下标的值
 	 */
 	public static String listIndex(String listKey, int index) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -269,6 +328,10 @@ public class CacheUtils {
 	 * @return 值
 	 */
 	public static String listPop(String listKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -293,6 +356,10 @@ public class CacheUtils {
 	 * @return 排序后的结果
 	 */
 	public static long listRemove(String listKey, int count, String value) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			listKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, listKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -318,6 +385,10 @@ public class CacheUtils {
 	 *            值
 	 */
 	public static void setAdd(String setKey, String value) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			setKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, setKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -341,6 +412,10 @@ public class CacheUtils {
 	 * @return 所有值
 	 */
 	public static Set<String> setGet(String setKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			setKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, setKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -366,6 +441,10 @@ public class CacheUtils {
 	 * @return 大小
 	 */
 	public static long setSize(String setKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			setKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, setKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -389,6 +468,10 @@ public class CacheUtils {
 	 * @return 结果
 	 */
 	public static boolean setExists(String setKey, String value) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			setKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, setKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -410,6 +493,10 @@ public class CacheUtils {
 	 * @return 值
 	 */
 	public static String setPop(String setKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			setKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, setKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -431,6 +518,10 @@ public class CacheUtils {
 	 * @return
 	 */
 	public static long setRemove(String setKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			setKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, setKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -512,6 +603,10 @@ public class CacheUtils {
 	 *            值
 	 */
 	public static void mapSave(String mapKey, Map<String, String> map) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -536,6 +631,10 @@ public class CacheUtils {
 	 *            值
 	 */
 	public static void mapPut(String mapKey, String key, String value) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -558,6 +657,10 @@ public class CacheUtils {
 	 *            键
 	 */
 	public static void mapExists(String mapKey, String key) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -580,6 +683,10 @@ public class CacheUtils {
 	 *            键
 	 */
 	public static String mapGet(String mapKey, String key) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -601,6 +708,10 @@ public class CacheUtils {
 	 *            map的key
 	 */
 	public static Set<String> mapKeys(String mapKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -622,6 +733,10 @@ public class CacheUtils {
 	 *            map的key
 	 */
 	public static List<String> mapValues(String mapKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -643,6 +758,10 @@ public class CacheUtils {
 	 *            map的key
 	 */
 	public static Long mapSize(String mapKey) {
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -664,7 +783,10 @@ public class CacheUtils {
 	 *            map的key
 	 */
 	public static Map<String, String> mapGetAll(String mapKey) {
-
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 			if (jedisCluster == null) {
@@ -686,7 +808,10 @@ public class CacheUtils {
 	 *            map的key
 	 */
 	public static Long mapRemove(String mapKey, String... keys) {
-
+		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
+		if(StringUtils.isNotBlank(storeRegion)){
+			mapKey = CacheCodeUtil.getCacheAdapterKey(storeRegion, mapKey);
+		}
 		JedisClusterCustom jedisCluster = CacheUtils.getRedisCache();
 		try {
 

@@ -15,7 +15,15 @@ import java.util.List;
  * 2015年4月23日
  */
 public interface ICache<K, V> {
+	
+    public static enum Level {
+        Local, Remote
+    }
 
+    public static enum Operator {
+        SET, GET, DEL, REM, CLS
+    }
+	
 	/**
 	 * 获取数据
 	 * 

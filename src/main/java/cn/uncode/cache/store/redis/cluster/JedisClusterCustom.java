@@ -64,5 +64,22 @@ public class JedisClusterCustom extends JedisCluster {
 		}
 		return keys;
 	}
+	
+	public Set<byte[]> keys(final byte[] pattern) {
+		Set<byte[]> keys = new TreeSet<>();
+		Map<String, JedisPool> clusterNodes = getClusterNodes();
+		for (String key : clusterNodes.keySet()) {
+			JedisPool jp = clusterNodes.get(key);
+			Jedis connection = jp.getResource();
+			try {
+				keys.addAll(connection.keys(pattern));
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				connection.close();
+			}
+		}
+		return keys;
+	}
 
 }

@@ -114,6 +114,21 @@ public class CacheCodeUtil {
         return key.toString();
 
     }
+    
+    public static String getCacheAdapterKey(String region, Object key) {
+        Assert.notNull(key);
+        // 最终的key
+        StringBuilder kkey = new StringBuilder();
+
+        // 1. region
+        if (StringUtils.isNotBlank(region))
+        	kkey.append(region).append(REGION_SPLITE_SIGN);
+
+        // 2. key
+        kkey.append(String.valueOf(key));
+
+        return kkey.toString();
+    }
 
     /**
      * 参数toString，格式{String|int}

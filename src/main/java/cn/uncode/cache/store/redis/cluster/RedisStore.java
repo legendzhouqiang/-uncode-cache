@@ -13,6 +13,7 @@ import cn.uncode.cache.CacheUtils;
 import cn.uncode.cache.framework.ICache;
 import cn.uncode.cache.framework.util.ByteUtil;
 import cn.uncode.cache.framework.util.SerializeUtil;
+import cn.uncode.cache.store.local.CacheTemplate;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -21,6 +22,7 @@ public class RedisStore implements ICache<Object, Object> {
 	private static final Logger LOG = LoggerFactory.getLogger(CacheUtils.class);
 
 	private JedisClusterCustom jedisCluster;
+	
 
 	public void clear() {
 	}
@@ -45,9 +47,7 @@ public class RedisStore implements ICache<Object, Object> {
 		} catch (Exception e) {
 			LOG.error("[read] redis cache error", e);
 			return null;
-		} finally {
-			// jedisCluster.close();
-		}
+		} 
 	}
 
 	@Override
@@ -63,15 +63,12 @@ public class RedisStore implements ICache<Object, Object> {
 					+ ",value:" + valStr);
 		} catch (Exception e) {
 			LOG.error("[put] redis cache error", e);
-		} finally {
-			// jedisCluster.close();
 		}
 	}
 
 	@Override
 	public void put(Object key, Object value, int expireTime) {
 		byte[] tkey = SerializeUtil.serialize(key.toString());
-
 		try {
 			jedisCluster.set(tkey, SerializeUtil.serialize(value));
 			jedisCluster.expire(tkey, expireTime);
@@ -83,16 +80,13 @@ public class RedisStore implements ICache<Object, Object> {
 					+ ",value:" + valStr + ",expire:" + expireTime);
 		} catch (Exception e) {
 			LOG.error("[put] redis cache error", e);
-		} finally {
-			// jedisCluster.close();
-		}
+		} 
 	}
 
 	@Override
 	public void remove(Object key) {
 		byte[] tkey = SerializeUtil.serialize(key.toString());
 		try {
-
 			if (jedisCluster.exists(tkey)) {
 				jedisCluster.expire(tkey, 0);
 			}
@@ -141,8 +135,6 @@ public class RedisStore implements ICache<Object, Object> {
 		} catch (Exception e) {
 			LOG.error("[isExists] redis cache error", e);
 			return false;
-		} finally {
-			// jedisCluster.close();
 		}
 	}
 

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
-import cn.uncode.util.config.UncodePropertyPlaceholderConfigurer;
+import cn.uncode.cache.framework.util.PropertiesUtil;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 
@@ -21,12 +21,12 @@ public class JedisClusterFactory implements FactoryBean<JedisClusterCustom>, Ini
 
 	private static Logger log = LoggerFactory.getLogger(JedisClusterFactory.class);
 
-	private static final int POOL_MAX_IDLE = 100;
-	private static final int POOL_MIN_IDLE = 8;
-	private static final int POOL_MAX_WAIT_MILLIS = 1000;
-	private static final int POOL_MAX_TOTAL = 600;
-	private static final int TIME_OUT = 10000;
-	private static final int MAX_REDIRECTIONS = 6;
+	public static final int POOL_MAX_IDLE = 100;
+	public static final int POOL_MIN_IDLE = 8;
+	public static final int POOL_MAX_WAIT_MILLIS = 1000;
+	public static final int POOL_MAX_TOTAL = 600;
+	public static final int TIME_OUT = 10000;
+	public static final int MAX_REDIRECTIONS = 6;
 
 	private Resource resource;
 	// redis集群的urls。多个用英文分号分隔。例：192.168.1.13:6379;192.168.1.13:6389
@@ -38,7 +38,6 @@ public class JedisClusterFactory implements FactoryBean<JedisClusterCustom>, Ini
 
 	@Override
 	public JedisClusterCustom getObject() throws Exception {
-
 		return JedisCluster;
 	}
 
@@ -57,9 +56,11 @@ public class JedisClusterFactory implements FactoryBean<JedisClusterCustom>, Ini
 		try {
 			Set<String> set = null;
 			if (null != resource) {
-				UncodePropertyPlaceholderConfigurer.loadPorperties(resource);
+				PropertiesUtil.loadPorperties(resource);
+			}else{
+				PropertiesUtil.loadProperties();
 			}
-			String urls = UncodePropertyPlaceholderConfigurer.getProperty("uncode_cache_redis_cluster_ipport");
+			String urls = PropertiesUtil.getProperty("uncode.cache.redisClusterAddress");
 			if(StringUtils.isBlank(urls)){
 				throw new IllegalArgumentException("解析 jedis ip和prot失败");
 			}
@@ -93,25 +94,30 @@ public class JedisClusterFactory implements FactoryBean<JedisClusterCustom>, Ini
 		this.resource = resource;
 	}
 
+	public void setJedisCluster(JedisClusterCustom jedisCluster) {
+		JedisCluster = jedisCluster;
+	}
+	
 	public void init() throws Exception {
 		Set<HostAndPort> haps = this.parseHostAndPort();
 		if (null == haps || haps.size() == 0) {
 			throw new Exception("解析 jedis 配置文件失败");
 		}
-		GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
-		genericObjectPoolConfig.setMaxIdle(
-				UncodePropertyPlaceholderConfigurer.getProperty4Int("uncode_cache_redis_pool_max_idle", POOL_MAX_IDLE));
-		genericObjectPoolConfig.setMinIdle(
-				UncodePropertyPlaceholderConfigurer.getProperty4Int("uncode_cache_redis_pool_min_idle", POOL_MIN_IDLE));
-		genericObjectPoolConfig.setMaxWaitMillis(UncodePropertyPlaceholderConfigurer
-				.getProperty4Int("uncode_cache_redis_pool_max_wait_millis", POOL_MAX_WAIT_MILLIS));
-		genericObjectPoolConfig.setMaxTotal(UncodePropertyPlaceholderConfigurer
-				.getProperty4Int("uncode_cache_redis_pool_max_total", POOL_MAX_TOTAL));
-		JedisCluster = new JedisClusterCustom(haps,
-				UncodePropertyPlaceholderConfigurer.getProperty4Int("uncode_cache_redis_cluster_time_out", TIME_OUT),
-				UncodePropertyPlaceholderConfigurer.getProperty4Int("uncode_cache_redis_cluster_max_redirections", MAX_REDIRECTIONS),
-				genericObjectPoolConfig);
-
+		if(JedisCluster == null){
+			GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
+			genericObjectPoolConfig.setMaxIdle(
+					PropertiesUtil.getProperty4Int("uncode.cache.redisPoolMaxIdle", POOL_MAX_IDLE));
+			genericObjectPoolConfig.setMinIdle(
+					PropertiesUtil.getProperty4Int("uncode.cache.redisPoolMinIdle", POOL_MIN_IDLE));
+			genericObjectPoolConfig.setMaxWaitMillis(PropertiesUtil
+					.getProperty4Int("uncode.cache.redisPoolMaxWaitMillis", POOL_MAX_WAIT_MILLIS));
+			genericObjectPoolConfig.setMaxTotal(PropertiesUtil
+					.getProperty4Int("uncode.cache.redisPoolMaxTotal", POOL_MAX_TOTAL));
+			JedisCluster = new JedisClusterCustom(haps,
+					PropertiesUtil.getProperty4Int("uncode.cache.redisClusterTimeout", TIME_OUT),
+					PropertiesUtil.getProperty4Int("uncode.cache.redisClusterMaxRedirections", MAX_REDIRECTIONS),
+					genericObjectPoolConfig);
+		}
 	}
 
 }
