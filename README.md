@@ -1,15 +1,42 @@
-# Part I. 框架设计目标
+uncode-cache
+===========
 
-1. 可以设置缓存定时自动更新时间
-2. 缓存预热
-3. 设置缓存消除的各种依赖关系
-4. 命中率、读/写耗时等监控（部分实现）
-5. 注解支持
+基于redis和ehcache的两级缓存组件，支持spring-boot,使用方便，有管理页面。
 
 
-------------------------------------------------------------------------
+## 功能概述
+1. 统一注解支持
+2. 可以设置缓存定时自动更新时间
+3. 可以缓存预热
+4. 可以设置缓存依赖消除
+5. 可以添加监听，使用实现命中率、读/写耗时等
 
-# Part II. 用户指向
+
+
+## spring boot
+
+### 1. application.peroperties
+	uncode.cache.redisClusterAddress=127.0.0.1:7000;127.0.0.1:7001;127.0.0.1:7002;127.0.0.1:7003;127.0.0.1:7004;127.0.0.1:7005
+	uncode.cache.redisPoolMaxIdle=
+	uncode.cache.redisPoolMinIdle =
+	uncode.cache.redisPoolMaxTotal=
+	uncode.cache.redisPoolMaxWaitMillis=
+	uncode.cache.redisClusterTimeout=
+	uncode.cache.redisClusterMaxRedirections=
+	uncode.cache.redisClusterPassword
+	uncode.cache.scanPackage=cn.uncode.cache
+	uncode.cache.useLocal=true
+	uncode.cache.openCacheLog=false
+	uncode.cache.storeRegion=uncode-cache-demo
+	
+### 2. spring boot启动类
+	@SpringBootApplication
+	@EnableAspectJAutoProxy
+	public class Application {
+		public static void main(String[] agrs){
+			SpringApplication.run(Application.class,agrs);
+		}
+	}
 
 ## spring配置
 
@@ -43,18 +70,43 @@
 	<bean class="com.ksudi.proxycache.framework.aop.handle.CacheManagerHandle">
 		<property name="cacheManager" ref="proxyCacheManager" />
 	</bean>
+	
 
 
-## 注解
 
-@Cache(expiredTime=60,cacheCleans={@CacheClean(beanName="couriersService6",methodName="updateCourierPwd")})
-public Map<?,?> getCourierInfoById(Long courierid) throws Exception {	
-	return courierDao.getCourierInfoById(courierid);
-}
+## 核心注解
 
-## 使用场景
+	@Cache(
+		preload = true,//是否需要缓存预热，会在系统启动时自已加载，支持特殊场景
+		preloadParameters = {"param1", "param2"},//加载方法参数，目前只支持String
+		expiredTime = 60,//缓存有效时间，单位秒
+		cleanTimeExpressions = "0 15 10 ? * *",//缓存定时清除时间表达式,如：每天10点15分触发
+		cacheCleans={//依赖清除bean定义，当该方法被调用时清除当前缓存，可定义多个
+			@CacheClean(
+				beanName="couriersService6",//bean名称
+				methodName="updateCourierPwd"//方法名称
+			)
+		}
+	)
+	public User getUserById(){...}
 
-1. 主要使用在service层。
-2. 缓存工具类。
 
-------------------------------------------------------------------------
+
+## 工具类
+
+可以直接使用cn.uncode.cache.CacheUtils工具类。
+
+
+## 管理页面
+
+
+## 关于
+
+作者：冶卫军（ywj_316@qq.com,微信:yeweijun）
+技术支持QQ群：47306892
+Copyright 2018 www.uncode.cn
+
+## 特别说明
+
+本项目使用了部分开源项目代码，保留了原作者的名称和所有内容，同时向作者致敬。
+
