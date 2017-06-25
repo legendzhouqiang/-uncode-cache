@@ -39,6 +39,7 @@ public abstract class CacheManager<E extends ApplicationEvent> implements Applic
         ApplicationListener<E> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheManager.class);
+    private static final String STORE_REGION_KEY = "uncode_cache_store_region";
 
     /**
      * 每一个method对应一个adapter实例
@@ -77,10 +78,12 @@ public abstract class CacheManager<E extends ApplicationEvent> implements Applic
      */
     private int localMapSegmentSize = ConcurrentLRUCacheMap.DEFAULT_CONCURRENCY_LEVEL;
 
-    public void init() throws Exception {
+    public void init(){
         // 1. 加载/校验config
         cacheConfig = loadConfig();
-
+        if(StringUtils.isNotBlank(storeRegion) && StringUtils.isBlank(cacheConfig.getStoreRegion())){
+        	cacheConfig.setStoreRegion(storeRegion);
+        }
         // 后面两个，见onApplicationEvent方法
     }
 

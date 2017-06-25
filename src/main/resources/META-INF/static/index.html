@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ace Cache Manager</title>
+    <link href="/webjars/bootstrap/3.1.0/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/jquery.jsonview.min.css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="container">
+    <h1>Uncode Cache Manager</h1>
+
+    <div id="alert" class="alert alert-success" style="display: none">
+        <a href="#" class="close" onclick="$('#alert').hide();">&times;</a> <strong>success!</strong>
+    </div>
+    <div class="row">
+        <hr>
+        <div class="col-sm-4">
+            <h2>Keys</h2>
+
+            <div class="form-group">
+                <label for="input-check-node" class="sr-only">Search Key:</label>
+                <input type="input" class="form-control" id="input-search"
+                       placeholder="Any key...">
+            </div>
+            <table class="table table-striped" id="keys"></table>
+        </div>
+        <div class="col-sm-8">
+        <div class="row">
+        	<div class="col-sm-6">
+	            <h2>Local</h2>
+				<textarea rows="10" cols="50" id="local"></textarea>
+	            <br/>
+	        </div>
+	        <div class="col-sm-6">
+	        	<h2>Remote</h2>
+				<textarea rows="10" cols="50" id="remote"></textarea>
+	            <br/>
+	        </div>
+	    </div>
+        <div class="row">
+	        <div class="col-sm-12">
+	            <h2>Fetch</h2>
+	
+	            <div class="form-group">
+	                <label for="input-check-node" class="sr-only">Search Tree:</label>
+	                <input type="input" class="form-control" style="width:400px;float:left" id="input-fetch"
+	                       placeholder="Identify node...">
+	                <button type="button" class="btn btn-success expand-node" style="float:left;margin-left:10px"
+                        id="btn-fetch">reload
+               		</button>
+	            </div>
+	            <br/><br/>
+	            <table class="table table-striped" id="fetch">
+	            		<tr>
+	            			<td><b>id</b></td>
+	            			<td><b>host</b></td>
+	            			<td><b>ttl</b></td>
+	            			<td><b>level</b></td>
+	            		</tr>
+	            </table>
+	       	</div>
+        </div>
+         </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Delay Cache Expired
+                    Time</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="expireHour">Expire Hour: </label> <input
+                            type="number" class="form-control" id="expireHour" value="1"
+                            placeholder="input the expire hour">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    close
+                </button>
+                <button type="button" id="btn-delay" class="btn btn-primary">delay</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap-treeview.min.js"></script>
+<script src="/static/js/jquery.jsonview.min.js"></script>
+<script src="/webjars/bootstrap/3.1.0/js/bootstrap.js"></script>
+<script src="/static/js/cache.js?v=3"></script>
+</body>
+</html>

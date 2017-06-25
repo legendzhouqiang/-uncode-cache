@@ -4,6 +4,8 @@
 package cn.uncode.cache.store.local;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import cn.uncode.cache.framework.ICache;
 import cn.uncode.cache.lru.ConcurrentLRUCacheMap;
@@ -95,6 +97,84 @@ public class MapStore implements ICache<Object, Object> {
 	public boolean isExists(Object key) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Object get(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void put(Object key, Object value, cn.uncode.cache.framework.ICache.Level level) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void put(Object key, Object value, int expireTime, cn.uncode.cache.framework.ICache.Level level) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void remove(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeAll() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeAll(cn.uncode.cache.framework.ICache.Level level) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int ttl(Object key) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int ttl(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isExists(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Set<String> storeRegions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Set<String>> storeRegionKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object putIfAbsent(Object key, Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object putIfAbsent(Object key, Object value, int expireTime) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

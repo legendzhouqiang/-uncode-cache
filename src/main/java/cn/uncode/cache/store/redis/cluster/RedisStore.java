@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
@@ -13,7 +14,6 @@ import cn.uncode.cache.CacheUtils;
 import cn.uncode.cache.framework.ICache;
 import cn.uncode.cache.framework.util.ByteUtil;
 import cn.uncode.cache.framework.util.SerializeUtil;
-import cn.uncode.cache.store.local.CacheTemplate;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -162,6 +162,74 @@ public class RedisStore implements ICache<Object, Object> {
 			}
 		}
 		return keys;
+	}
+
+	@Override
+	public Object get(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		return null;
+	}
+
+	@Override
+	public void put(Object key, Object value, cn.uncode.cache.framework.ICache.Level level) {
+		
+	}
+
+	@Override
+	public void put(Object key, Object value, int expireTime, cn.uncode.cache.framework.ICache.Level level) {
+		
+	}
+
+
+	@Override
+	public void remove(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		
+	}
+
+	@Override
+	public void removeAll() {
+		
+	}
+
+	@Override
+	public void removeAll(cn.uncode.cache.framework.ICache.Level level) {
+		
+	}
+
+	@Override
+	public int ttl(Object key) {
+		return 0;
+	}
+
+	@Override
+	public int ttl(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		return 0;
+	}
+
+	@Override
+	public boolean isExists(Object key, cn.uncode.cache.framework.ICache.Level level) {
+		return false;
+	}
+
+	@Override
+	public Set<String> storeRegions() {
+		return null;
+	}
+
+	@Override
+	public Map<String, Set<String>> storeRegionKeys() {
+		return null;
+	}
+
+	@Override
+	public Object putIfAbsent(Object key, Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object putIfAbsent(Object key, Object value, int expireTime) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

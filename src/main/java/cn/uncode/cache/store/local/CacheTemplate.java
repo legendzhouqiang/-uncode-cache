@@ -1,6 +1,7 @@
 package cn.uncode.cache.store.local;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,11 +85,12 @@ public class CacheTemplate {
     public static String CACHE_STORE;
     public static String CACHE_STORE_SYNC;
 
-    public void Ehcahce(){
+    public CacheTemplate(JedisTemplate jedisTemplate){
     	ID = key + "." + UUID.randomUUID();
         HOST = NetUtil.getLocalHostIP();
-        CACHE_STORE = key + spliter + "cache" + spliter + "store";
+        CACHE_STORE = key;
         CACHE_STORE_SYNC = CACHE_STORE + spliter + "sync";
+        this.jedisTemplate = jedisTemplate;
         if (this.localEnabled) {
             Configuration configuration = new Configuration();
             configuration.setName(ID);
@@ -139,7 +142,7 @@ public class CacheTemplate {
     /**
      * 设置缓存(根据缓存级别)
      */
-    protected void set(String name, String key, Object value, Level level) {
+    public void set(String name, String key, Object value, Level level) {
         if (level.equals(Level.Local)) {
             if (!localEnabled) {
                 return;
@@ -174,7 +177,7 @@ public class CacheTemplate {
     /**
      * 设置缓存与过期时间(根据缓存级别)
      */
-    protected void set(String name, String key, Object value, int ttl, Level level) {
+    public void set(String name, String key, Object value, int ttl, Level level) {
         if (level.equals(Level.Local)) {
             if (!localEnabled) {
                 return;
@@ -483,7 +486,7 @@ public class CacheTemplate {
     public List<CacheData> fetch(String name, String key) {
         logger.debug("fetch > name:" + name + ",key:" + key);
         long waitMaxTime = System.currentTimeMillis() + this.fetchTimeoutSeconds * 1000;
-        String fetch = this.getRedisKeyOfElement(name, key) + spliter + "fetch" + spliter + UUID.randomUUID();
+        String fetch = this.getRedisKeyOfElement(name, key) + spliter + "fetch" + spliter + ID;
         this.sendFetchCmd(name, key, fetch);
         do {
             try {
@@ -527,13 +530,6 @@ public class CacheTemplate {
     }
 
     /**
-     * 获取name下所有缓存Key
-     */
-    public Set<String> keys(String name) {
-        return this.getElements(name);
-    }
-
-    /**
      * 获取name下所有缓存值
      */
     public <E> List<E> values(String name) {
@@ -558,6 +554,23 @@ public class CacheTemplate {
      */
     public int size(String name) {
         return this.getElements(name).size();
+    }
+    
+    public Set<String> keys(String name, String pattern){
+    	Set<String> rt = new HashSet<String>();
+    	Set<String> keys = this.getElements(name);
+    	if(StringUtils.isNotBlank(pattern)){
+        	if(keys != null){
+        		for(String key:keys){
+        			if(key.indexOf(pattern.trim()) != -1){
+        				rt.add(key);
+        			}
+        		}
+        	}
+    	}else{
+    		rt.addAll(keys);
+    	}
+    	return rt;
     }
 
     /**

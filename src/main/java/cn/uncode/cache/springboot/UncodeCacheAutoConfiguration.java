@@ -51,8 +51,7 @@ public class UncodeCacheAutoConfiguration {
 		boolean useLocal = PropertiesUtil.getProperty4Boolean("uncode.cache.useLocal", false);
 		if(useLocal){
         	JedisTemplate jedisTemplate = new JedisTemplate(jedisClusterCustom);
-        	CacheTemplate cacheTemplate = new CacheTemplate();
-        	cacheTemplate.setJedisTemplate(jedisTemplate);
+        	CacheTemplate cacheTemplate = new CacheTemplate(jedisTemplate);
         	CacheStore cache = new CacheStore(PropertiesUtil.getProperty("uncode.cache.storeRegion"), cacheTemplate);
 			return cache;
 		}
@@ -68,7 +67,8 @@ public class UncodeCacheAutoConfiguration {
 		ConfigCacheManager configCacheManager = new ConfigCacheManager();
 		configCacheManager.setScanPackage(PropertiesUtil.getProperty("uncode.cache.scanPackage"));
 		configCacheManager.setCache(cache);
-		ConfigCacheManager.getCacheConfig().setStoreRegion(PropertiesUtil.getProperty("uncode.cache.storeRegion"));
+		configCacheManager.setStoreRegion(PropertiesUtil.getProperty("uncode.cache.storeRegion"));
+		configCacheManager.init();
 		LOGGER.info("=====>CacheManager inited..");
 		return configCacheManager;
 	}
