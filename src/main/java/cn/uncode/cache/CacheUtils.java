@@ -30,64 +30,46 @@ public class CacheUtils {
 	}
 
 	public static Object get(Object key) {
-		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
-		if(StringUtils.isNotBlank(storeRegion)){
-			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
-		}
 		Object result = getCache().get(key);
 		LOG.debug("[get] redis cache read,key:" + key + ",result:" + result);
 		return result;
 	}
 
 	public static void put(Object key, Object value) {
-		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
-		if(StringUtils.isNotBlank(storeRegion)){
-			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
-		}
 		getCache().put(key, value);
 		LOG.debug("[put] redis cache write,key:" + key + ",value:" + value);
 	}
 
 	public static void put(Object key, Object value, int expireTime) {
-		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
-		if(StringUtils.isNotBlank(storeRegion)){
-			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
-		}
 		getCache().put(key, value, expireTime);
 		LOG.debug("[put] redis cache write,key:" + key + ",value:" + value
 				+ ",expire:" + expireTime);
 	}
+	
+	public static List<String> getKeys(String pattern){
+		List<Object> list = getCache().keys(pattern);
+		List<String> rt = new ArrayList<String>();
+		if(list != null && list.size() > 0){
+			for(Object obj:list){
+				rt.add(String.valueOf(obj));
+			}
+		}
+		return rt;
+	}
 
 	public static boolean isExists(Object key) {
-		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
-		if(StringUtils.isNotBlank(storeRegion)){
-			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
-		}
 		return getCache().isExists(key);
 	}
 
 	public static void remove(Object key) {
-		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
-		if(StringUtils.isNotBlank(storeRegion)){
-			key = CacheCodeUtil.getCacheAdapterKey(storeRegion, key);
-		}
 		getCache().remove(key);
 		LOG.debug("[remove] redis cache write,key:" + key);
 	}
 
 	public static List<Object> keys(String pattern) {
-		String storeRegion = ConfigCacheManager.getCacheConfig().getStoreRegion();
 		List<Object> keys = getCache().keys(pattern);
-		List<Object> keysList = new ArrayList<Object>();
-		if(keys != null){
-			for(Object key:keys){
-				if(String.valueOf(key).indexOf(storeRegion) != -1){
-					keysList.add(key);
-				}
-			}
-		}
 		LOG.debug("[keys] redis cache read, pattern:" + pattern + ",keys:" + keys);
-		return keysList;
+		return keys;
 	}
 
 	public static int size() {
