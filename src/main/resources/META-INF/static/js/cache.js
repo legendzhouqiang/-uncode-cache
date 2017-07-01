@@ -115,9 +115,9 @@ function getkey(key){
                 $("#local").JSONView(local);
             } else {
                 $('#remote').empty();
-                $('#remote').prepend('<p>' + remote+ '</p>');
+                $('#remote').prepend(remote);
                 $('#local').empty();
-                $('#local').prepend('<p>' + local+ '</p>');
+                $('#local').prepend(local);
             }
         }
     });
@@ -131,8 +131,8 @@ function searchKeys(keys){
             var tb = $('#keys');
             for( var i = 0; i < defaultData.length; i++ ) {
             	var tr=$("<tr></tr>");
-            	var td=$("<td></td>");
-            	var a=$("<a href='javascript:void(0);' onclick=getkey('"+defaultData[i]+"')>"+ defaultData[i] +"</a>");
+            	var td=$("<td width='85%' style='overflow:hidden;text-overflow:ellipsis;'></td>");
+            	var a=$("<a href='javascript:void(0);' title='" + defaultData[i] + "' onclick=getkey('"+defaultData[i]+"')>"+ defaultData[i] +"</a>");
             	a.appendTo(td);
             	td.appendTo(tr);
             	var td=$("<td><a href='javascript:void(0);' onclick=delkey('"+defaultData[i]+"')>删除</a></td>");

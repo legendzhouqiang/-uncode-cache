@@ -1,23 +1,14 @@
 package cn.uncode.cache.framework.util;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 
 public class PropertiesUtil{
@@ -37,6 +28,18 @@ public class PropertiesUtil{
     		if (null != resource) {
     			Properties prop = new Properties();
     			prop.load(resource.getInputStream());
+    			for (Object key : prop.keySet()) {
+    				PROPERTIES_MAP.put(key.toString(), String.valueOf(prop.get(key)));
+    			}
+    		}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}	
+    
+    public static void loadPorperties(Properties prop){
+    	try {
+    		if (null != prop) {
     			for (Object key : prop.keySet()) {
     				PROPERTIES_MAP.put(key.toString(), String.valueOf(prop.get(key)));
     			}
@@ -66,12 +69,12 @@ public class PropertiesUtil{
 			}
 			if(StringUtils.isNotBlank(filePath)){
 				Properties properties = new Properties();
-				FileInputStream fis = null;
+				InputStream fis = null;
 				InputStreamReader isr = null;
 				BufferedReader br = null;
 				try{
 					UrlResource urlResource = new UrlResource(filePath);
-					fis = new FileInputStream(urlResource.getFile());
+					fis = urlResource.getInputStream();
 					isr = new InputStreamReader(fis);
 					br = new BufferedReader(isr);  
 					properties.load(br);
@@ -137,5 +140,7 @@ public class PropertiesUtil{
     	}
     	return defalutValue;
     }
+    
+    
 
 }
