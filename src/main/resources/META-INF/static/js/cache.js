@@ -33,18 +33,30 @@ $(function () {
 			searchKeys(key);
         }
     });
-    $('#btn-delay').on('click', function (e) {
-        if ($('#expireHour').val() == "") {
-            alert("Please input the number!");
-        }
-        if($('#expireTime').text()==""){
-            $('#updateModal').modal('hide');
+    $('#btn-add').on('click', function (e) {
+    	$('#updateModal').modal('show');
+    });
+    
+    $('#btn-save').on('click', function (e) {
+    	$('#updateModal').modal('show');
+        if ($('#key').val() == "") {
+            alert("Please input the key!");
             return;
+        }
+        if ($('#value').val() == "") {
+            alert("Please input the value!");
+            return;
+        }
+        var param = {};
+        param["key"] = $('#key').val();
+        param["value"] = $('#value').val();
+        if ($('#level').val() != "") {
+        	param["level"] = $('#level').val();
         }
         $.ajax({
             type: 'PUT',
-            url: "/cache/" + $('#key').text(),
-            data: "hour=" + $('#expireHour').val(),
+            url: "/cache/add",
+            data: param,
             success: function (data) {
                 show();
                 init();
@@ -52,6 +64,8 @@ $(function () {
             }
         });
     });
+    
+    
     init();
 });
 function clear() {

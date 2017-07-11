@@ -34,13 +34,16 @@ public class CacheRest {
     	return cache.keys(key);
     }
 
-    @RequestMapping(path = "/add/{val}", method = RequestMethod.GET)
+    @RequestMapping(path = "/add", method = RequestMethod.PUT)
     @ResponseBody
-    public String add(@PathVariable("val") String val) {
-    	if(StringUtils.isNotBlank(val)){
-    		String[] vals = val.split("-");
-    		if(vals.length > 1){
-    			cache.put(vals[0], vals[1]);
+    public String add(String key, String value, String level) {
+    	if(StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)){
+    		if("local".equals(level)){
+    			cache.put(key, value, Level.Local);
+    		}else if("remote".equals(level)){
+    			cache.put(key, value, Level.Remote);
+    		}else{
+    			cache.put(key, value);
     		}
     	}
     	return "ok";

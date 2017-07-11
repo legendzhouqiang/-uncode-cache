@@ -49,6 +49,9 @@
 	                <button type="button" class="btn btn-success expand-node" style="float:left;margin-left:10px"
                         id="btn-fetch">reload
                		</button>
+               		<button type="button" class="btn btn-success expand-node" style="float:left;margin-left:10px"
+                        id="btn-add">add
+               		</button>
 	            </div>
 	            <br/><br/>
 	            <table class="table table-striped" id="fetch">
@@ -74,15 +77,17 @@
                 <button type="button" class="close" data-dismiss="modal"
                         aria-hidden="true">×
                 </button>
-                <h4 class="modal-title" id="myModalLabel">Delay Cache Expired
-                    Time</h4>
+                <h4 class="modal-title" id="myModalLabel">Add Cache</h4>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="expireHour">Expire Hour: </label> <input
-                            type="number" class="form-control" id="expireHour" value="1"
-                            placeholder="input the expire hour">
+                        <label for="key">Key: </label> <input
+                            type="text" class="form-control" id="key" placeholder="input the key">
+                        <label for="value">Value: </label> <input
+                            type="text" class="form-control" id="value" placeholder="input the value">
+                        <label for="level">Level(all/local/remote): </label><input
+                            type="text" class="form-control" id="value" placeholder="input the level">
                     </div>
                 </form>
             </div>
@@ -90,7 +95,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">
                     close
                 </button>
-                <button type="button" id="btn-delay" class="btn btn-primary">delay</button>
+                <button type="button" id="btn-save" class="btn btn-primary">save</button>
             </div>
         </div>
         <!-- /.modal-content -->
